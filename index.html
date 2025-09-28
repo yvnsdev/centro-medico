@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Reserva - Nutricionista</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 class="logo">NutriReserva</h1>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#home" class="nav-link active">Inicio</a></li>
+                    <li><a href="#reservar" class="nav-link">Reservar</a></li>
+                    <li><a href="#mis-reservas" class="nav-link">Mis Reservas</a></li>
+                    <li id="admin-nav" style="display:none;"><a href="#admin" class="nav-link">Administración</a></li>
+                </ul>
+            </nav>
+            <div class="auth-status">
+                <span id="user-info" style="display:none;"></span>
+                <button id="login-btn" class="btn btn-primary">Iniciar Sesión</button>
+                <button id="logout-btn" class="btn btn-secondary" style="display:none;">Cerrar Sesión</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Sección de Autenticación -->
+        <section id="auth-section" class="section">
+            <div class="auth-container">
+                <div id="auth-forms">
+                    <div id="login-form" class="auth-form active">
+                        <h2>Iniciar Sesión</h2>
+                        <form id="login-form-el">
+                            <div class="form-group">
+                                <label for="login-email">Email:</label>
+                                <input type="email" id="login-email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="login-password">Contraseña:</label>
+                                <input type="password" id="login-password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Ingresar</button>
+                            <button type="button" id="show-register" class="btn btn-link">Crear cuenta</button>
+                            <button type="button" id="show-reset" class="btn btn-link">¿Olvidaste tu contraseña?</button>
+                        </form>
+                    </div>
+
+                    <div id="register-form" class="auth-form">
+                        <h2>Registrarse</h2>
+                        <form id="register-form-el">
+                            <div class="form-group">
+                                <label for="register-fullname">Nombre completo:</label>
+                                <input type="text" id="register-fullname" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="register-email">Email:</label>
+                                <input type="email" id="register-email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="register-phone">Teléfono (opcional):</label>
+                                <input type="tel" id="register-phone">
+                            </div>
+                            <div class="form-group">
+                                <label for="register-password">Contraseña:</label>
+                                <input type="password" id="register-password" required minlength="6">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Registrarse</button>
+                            <button type="button" id="show-login" class="btn btn-link">Volver a login</button>
+                        </form>
+                    </div>
+
+                    <div id="reset-form" class="auth-form">
+                        <h2>Recuperar Contraseña</h2>
+                        <form id="reset-form-el">
+                            <div class="form-group">
+                                <label for="reset-email">Email:</label>
+                                <input type="email" id="reset-email" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Enviar enlace</button>
+                            <button type="button" id="show-login-from-reset" class="btn btn-link">Volver a login</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Principal para Usuarios Autenticados -->
+        <div id="authenticated-content" style="display:none;">
+            <!-- Reserva de Horas -->
+            <section id="reservar" class="section">
+                <h2>Reservar Cita</h2>
+                <div class="wizard">
+                    <div class="wizard-steps">
+                        <div class="step active" data-step="1">Seleccionar Fecha</div>
+                        <div class="step" data-step="2">Seleccionar Hora</div>
+                        <div class="step" data-step="3">Confirmar</div>
+                    </div>
+                    
+                    <div class="wizard-content">
+                        <div id="step-1" class="step-content active">
+                            <div class="form-group">
+                                <label for="appointment-date">Fecha:</label>
+                                <input type="date" id="appointment-date" min="">
+                            </div>
+                            <button id="next-to-step2" class="btn btn-primary">Siguiente</button>
+                        </div>
+                        
+                        <div id="step-2" class="step-content">
+                            <div id="time-slots" class="time-slots-grid"></div>
+                            <div class="wizard-nav">
+                                <button id="back-to-step1" class="btn btn-secondary">Atrás</button>
+                            </div>
+                        </div>
+                        
+                        <div id="step-3" class="step-content">
+                            <div id="appointment-summary"></div>
+                            <div class="wizard-nav">
+                                <button id="back-to-step2" class="btn btn-secondary">Atrás</button>
+                                <button id="confirm-appointment" class="btn btn-primary">Confirmar Reserva</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mis Reservas -->
+            <section id="mis-reservas" class="section">
+                <h2>Mis Reservas</h2>
+                <div id="my-appointments-list" class="appointments-list"></div>
+            </section>
+
+            <!-- Panel de Administración (solo para admin) -->
+            <section id="admin" class="section" style="display:none;">
+                <h2>Panel de Administración</h2>
+                
+                <div class="admin-tabs">
+                    <button class="tab-btn active" data-tab="availability">Disponibilidad</button>
+                    <button class="tab-btn" data-tab="agenda">Agenda del Día</button>
+                    <button class="tab-btn" data-tab="documents">Documentos</button>
+                </div>
+                
+                <div class="tab-content">
+                    <!-- Disponibilidad Recurrente -->
+                    <div id="availability-tab" class="tab-pane active">
+                        <h3>Disponibilidad Recurrente</h3>
+                        <div id="availability-rules-list"></div>
+                        <button id="add-availability-rule" class="btn btn-primary">Agregar Regla</button>
+                        
+                        <h3>Excepciones/Bloqueos</h3>
+                        <div id="availability-exceptions-list"></div>
+                        <button id="add-availability-exception" class="btn btn-primary">Agregar Excepción</button>
+                    </div>
+                    
+                    <!-- Agenda del Día -->
+                    <div id="agenda-tab" class="tab-pane">
+                        <h3>Agenda del Día</h3>
+                        <div class="form-group">
+                            <label for="agenda-date">Fecha:</label>
+                            <input type="date" id="agenda-date">
+                        </div>
+                        <button id="load-agenda" class="btn btn-primary">Cargar Agenda</button>
+                        <div id="agenda-list" class="agenda-list"></div>
+                    </div>
+                    
+                    <!-- Subir Documentos -->
+                    <div id="documents-tab" class="tab-pane">
+                        <h3>Subir Plan de Alimentación</h3>
+                        <div class="form-group">
+                            <label for="appointment-for-document">Seleccionar Cita:</label>
+                            <select id="appointment-for-document"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="document-file">Archivo (PDF, PNG, JPG):</label>
+                            <input type="file" id="document-file" accept=".pdf,.png,.jpg,.jpeg">
+                        </div>
+                        <button id="upload-document" class="btn btn-primary">Subir Documento</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Modal de Confirmación -->
+    <div id="modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3 id="modal-title"></h3>
+            <p id="modal-message"></p>
+            <div class="modal-buttons">
+                <button id="modal-cancel" class="btn btn-secondary">Cancelar</button>
+                <button id="modal-confirm" class="btn btn-primary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
