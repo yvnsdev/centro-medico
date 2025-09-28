@@ -3,123 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Reserva - Nutricionista</title>
+    <title>NutriReserva - Sistema de Citas para Nutricionistas</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- Header -->
     <header>
         <div class="container">
-            <h1 class="logo">NutriReserva</h1>
+            <div class="logo-section">
+                <div class="logo">
+                    <i class="fas fa-leaf"></i>
+                    <span>NutriReserva</span>
+                </div>
+                <p class="tagline">Salud y bienestar a tu alcance</p>
+            </div>
+            
             <nav>
                 <ul class="nav-menu">
-                    <li><a href="#home" class="nav-link active">Inicio</a></li>
-                    <li><a href="#reservar" class="nav-link">Reservar</a></li>
-                    <li><a href="#mis-reservas" class="nav-link">Mis Reservas</a></li>
-                    <li id="admin-nav" style="display:none;"><a href="#admin" class="nav-link">Administración</a></li>
+                    <li><a href="#home" class="nav-link active"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="#reservar" class="nav-link"><i class="fas fa-calendar-plus"></i> Reservar</a></li>
+                    <li><a href="#mis-reservas" class="nav-link"><i class="fas fa-list-alt"></i> Mis Reservas</a></li>
+                    <li id="admin-nav" style="display:none;"><a href="#admin" class="nav-link"><i class="fas fa-cog"></i> Administración</a></li>
                 </ul>
             </nav>
+            
             <div class="auth-status">
                 <span id="user-info" style="display:none;"></span>
-                <button id="login-btn" class="btn btn-primary">Iniciar Sesión</button>
-                <button id="logout-btn" class="btn btn-secondary" style="display:none;">Cerrar Sesión</button>
+                <button id="login-btn" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</button>
+                <button id="logout-btn" class="btn btn-outline" style="display:none;"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
             </div>
+            
+            <button class="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
     </header>
 
-    <main class="container">
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Cuida tu salud con <span class="highlight">NutriReserva</span></h1>
+                <p>Sistema de reserva de citas para consultas nutricionales profesionales. Agenda tu cita de forma rápida y sencilla.</p>
+                <div class="hero-buttons">
+                    <button id="hero-reserve-btn" class="btn btn-primary btn-large"><i class="fas fa-calendar-check"></i> Reservar Cita</button>
+                    <button id="hero-login-btn" class="btn btn-secondary btn-large"><i class="fas fa-user"></i> Acceder</button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTBlOGZmIi8+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTUwLCAxMDApIj4KICAgIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iODAiIGZpbGw9IiMyZTdkMzIiIG9wYWNpdHk9IjAuMSIvPgogICAgPGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI2MCIgZmlsbD0iIzJlN2QzMiIgb3BhY2l0eT0iMC4yIi8+CiAgICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjQwIiBmaWxsPSIjMmU3ZDMzIiBvcGFjaXR5PSIwLjQiLz4KICAgIDxwYXRoIGQ9Ik03MCAxMjAgTDEzMCAxMjAgTDEzMCAxNjAgTDcwIDE2MCBaIiBmaWxsPSIjZmZmIi8+CiAgICA8cGF0aCBkPSJNODAgMTMwIEwxMjAgMTMwIEwxMjAgMTUwIEw4MCAxNTAgWiIgZmlsbD0iIzJlN2QzMyIvPgogICAgPGNpcmNsZSBjeD0iMTAwIiBjeT0iODAiIHI9IjMwIiBmaWxsPSIjZmZmIi8+CiAgICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSI4MCIgcj0iMTUiIGZpbGw9IiMyZTdkMzMiLz4KICA8L2c+Cjwvc3ZnPg==" alt="Salud y Nutrición">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2>¿Por qué elegirnos?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h3>Profesionales Certificados</h3>
+                    <p>Nuestros nutricionistas están altamente capacitados y certificados para ofrecerte el mejor asesoramiento.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Reservas 24/7</h3>
+                    <p>Agenda tu cita en cualquier momento del día, desde la comodidad de tu hogar.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Gestión de Citas</h3>
+                    <p>Consulta, modifica o cancela tus citas de manera sencilla a través de nuestra plataforma.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <h3>Seguimiento Personalizado</h3>
+                    <p>Accede a tus planes de alimentación y documentos de seguimiento de forma segura.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>Sobre Nuestra Profesional</h2>
+                    <h3>Lic. María Pérez</h3>
+                    <p>Nutricionista certificada con más de 10 años de experiencia en el área clínica y deportiva. Especializada en planes de alimentación personalizados según las necesidades de cada paciente.</p>
+                    <div class="qualifications">
+                        <div class="qualification">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Licenciada en Nutrición - Universidad de Buenos Aires</span>
+                        </div>
+                        <div class="qualification">
+                            <i class="fas fa-award"></i>
+                            <span>Especialista en Nutrición Deportiva</span>
+                        </div>
+                        <div class="qualification">
+                            <i class="fas fa-award"></i>
+                            <span>Diplomada en Obesidad y Comorbilidades</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+CiAgPGNpcmNsZSBjeD0iMTUwIiBjeT0iMTIwIiByPSI2MCIgZmlsbD0iI2UwZThmZiIvPgogIDxjaXJjbGUgY3g9IjEzMCIgY3k9IjEwMCIgcj0iOCIgZmlsbD0iIzJlN2QzMyIvPgogIDxjaXJjbGUgY3g9IjE3MCIgY3k9IjEwMCIgcj0iOCIgZmlsbD0iIzJlN2QzMyIvPgogIDxwYXRoIGQ9Ik0xMzAgMTQwIHEyMCAyMCA0MCAwIiBzdHJva2U9IiMyZTdkMzMiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTEwMCAyMDAgbDEwMCAwIC0yMCAtNDAgLTIwIDQwIC0yMCAtNDAgLTIwIDQwIC0yMCAtNDAgeiIgZmlsbD0iIzJlN2QzMyIvPgo8L3N2Zz4=" alt="Lic. María Pérez">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content (Solo visible para usuarios autenticados) -->
+    <main class="container" id="main-content">
         <!-- Sección de Autenticación -->
-        <section id="auth-section" class="section">
+        <section id="auth-section" class="section auth-section">
             <div class="auth-container">
+                <div class="auth-header">
+                    <h2>Accede a tu cuenta</h2>
+                    <p>Gestiona tus citas y accede a tus documentos</p>
+                </div>
+                
                 <div id="auth-forms">
                     <div id="login-form" class="auth-form active">
-                        <h2>Iniciar Sesión</h2>
                         <form id="login-form-el">
                             <div class="form-group">
                                 <label for="login-email">Email:</label>
-                                <input type="email" id="login-email" required>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="login-email" required placeholder="tu@email.com">
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="login-password">Contraseña:</label>
-                                <input type="password" id="login-password" required>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="login-password" required placeholder="Tu contraseña">
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Ingresar</button>
-                            <button type="button" id="show-register" class="btn btn-link">Crear cuenta</button>
-                            <button type="button" id="show-reset" class="btn btn-link">¿Olvidaste tu contraseña?</button>
+                            <button type="submit" class="btn btn-primary btn-full">Ingresar</button>
+                            <div class="auth-links">
+                                <button type="button" id="show-register" class="btn btn-link">Crear cuenta</button>
+                                <button type="button" id="show-reset" class="btn btn-link">¿Olvidaste tu contraseña?</button>
+                            </div>
                         </form>
                     </div>
 
                     <div id="register-form" class="auth-form">
-                        <h2>Registrarse</h2>
                         <form id="register-form-el">
                             <div class="form-group">
                                 <label for="register-fullname">Nombre completo:</label>
-                                <input type="text" id="register-fullname" required>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="register-fullname" required placeholder="Tu nombre completo">
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="register-email">Email:</label>
-                                <input type="email" id="register-email" required>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="register-email" required placeholder="tu@email.com">
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="register-phone">Teléfono (opcional):</label>
-                                <input type="tel" id="register-phone">
+                                <div class="input-with-icon">
+                                    <i class="fas fa-phone"></i>
+                                    <input type="tel" id="register-phone" placeholder="+34 123 456 789">
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="register-password">Contraseña:</label>
-                                <input type="password" id="register-password" required minlength="6">
+                                <div class="input-with-icon">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="register-password" required minlength="6" placeholder="Mínimo 6 caracteres">
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Registrarse</button>
-                            <button type="button" id="show-login" class="btn btn-link">Volver a login</button>
+                            <button type="submit" class="btn btn-primary btn-full">Registrarse</button>
+                            <div class="auth-links">
+                                <button type="button" id="show-login" class="btn btn-link">Volver a login</button>
+                            </div>
                         </form>
                     </div>
 
                     <div id="reset-form" class="auth-form">
-                        <h2>Recuperar Contraseña</h2>
                         <form id="reset-form-el">
                             <div class="form-group">
                                 <label for="reset-email">Email:</label>
-                                <input type="email" id="reset-email" required>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="reset-email" required placeholder="tu@email.com">
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Enviar enlace</button>
-                            <button type="button" id="show-login-from-reset" class="btn btn-link">Volver a login</button>
+                            <button type="submit" class="btn btn-primary btn-full">Enviar enlace de recuperación</button>
+                            <div class="auth-links">
+                                <button type="button" id="show-login-from-reset" class="btn btn-link">Volver a login</button>
+                            </div>
                         </form>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Sección Principal para Usuarios Autenticados -->
+        <!-- Contenido para usuarios autenticados -->
         <div id="authenticated-content" style="display:none;">
             <!-- Reserva de Horas -->
-            <section id="reservar" class="section">
-                <h2>Reservar Cita</h2>
+            <section id="reservar" class="section appointment-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-calendar-plus"></i> Reservar Cita</h2>
+                    <p>Selecciona la fecha y hora para tu consulta nutricional</p>
+                </div>
+                
                 <div class="wizard">
                     <div class="wizard-steps">
-                        <div class="step active" data-step="1">Seleccionar Fecha</div>
-                        <div class="step" data-step="2">Seleccionar Hora</div>
-                        <div class="step" data-step="3">Confirmar</div>
+                        <div class="step active" data-step="1">
+                            <div class="step-number">1</div>
+                            <div class="step-label">Seleccionar Fecha</div>
+                        </div>
+                        <div class="step" data-step="2">
+                            <div class="step-number">2</div>
+                            <div class="step-label">Seleccionar Hora</div>
+                        </div>
+                        <div class="step" data-step="3">
+                            <div class="step-number">3</div>
+                            <div class="step-label">Confirmar</div>
+                        </div>
                     </div>
                     
                     <div class="wizard-content">
                         <div id="step-1" class="step-content active">
-                            <div class="form-group">
-                                <label for="appointment-date">Fecha:</label>
-                                <input type="date" id="appointment-date" min="">
+                            <div class="step-description">
+                                <h3>Elige una fecha para tu cita</h3>
+                                <p>Selecciona una fecha disponible en el calendario</p>
                             </div>
-                            <button id="next-to-step2" class="btn btn-primary">Siguiente</button>
+                            <div class="form-group">
+                                <label for="appointment-date">Fecha de la cita:</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-calendar-day"></i>
+                                    <input type="date" id="appointment-date" min="">
+                                </div>
+                            </div>
+                            <div class="wizard-nav">
+                                <button id="next-to-step2" class="btn btn-primary">Siguiente <i class="fas fa-arrow-right"></i></button>
+                            </div>
                         </div>
                         
                         <div id="step-2" class="step-content">
+                            <div class="step-description">
+                                <h3>Selecciona un horario disponible</h3>
+                                <p>Elige el horario que mejor se adapte a tu agenda</p>
+                            </div>
                             <div id="time-slots" class="time-slots-grid"></div>
                             <div class="wizard-nav">
-                                <button id="back-to-step1" class="btn btn-secondary">Atrás</button>
+                                <button id="back-to-step1" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Atrás</button>
                             </div>
                         </div>
                         
                         <div id="step-3" class="step-content">
-                            <div id="appointment-summary"></div>
+                            <div class="step-description">
+                                <h3>Confirma tu reserva</h3>
+                                <p>Revisa los detalles de tu cita antes de confirmar</p>
+                            </div>
+                            <div id="appointment-summary" class="appointment-summary"></div>
                             <div class="wizard-nav">
-                                <button id="back-to-step2" class="btn btn-secondary">Atrás</button>
-                                <button id="confirm-appointment" class="btn btn-primary">Confirmar Reserva</button>
+                                <button id="back-to-step2" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Atrás</button>
+                                <button id="confirm-appointment" class="btn btn-primary"><i class="fas fa-check"></i> Confirmar Reserva</button>
                             </div>
                         </div>
                     </div>
@@ -127,61 +286,146 @@
             </section>
 
             <!-- Mis Reservas -->
-            <section id="mis-reservas" class="section">
-                <h2>Mis Reservas</h2>
+            <section id="mis-reservas" class="section appointments-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-list-alt"></i> Mis Reservas</h2>
+                    <p>Gestiona tus citas programadas</p>
+                </div>
                 <div id="my-appointments-list" class="appointments-list"></div>
             </section>
 
             <!-- Panel de Administración (solo para admin) -->
-            <section id="admin" class="section" style="display:none;">
-                <h2>Panel de Administración</h2>
+            <section id="admin" class="section admin-section" style="display:none;">
+                <div class="section-header">
+                    <h2><i class="fas fa-cog"></i> Panel de Administración</h2>
+                    <p>Gestiona la disponibilidad y agenda de consultas</p>
+                </div>
                 
                 <div class="admin-tabs">
-                    <button class="tab-btn active" data-tab="availability">Disponibilidad</button>
-                    <button class="tab-btn" data-tab="agenda">Agenda del Día</button>
-                    <button class="tab-btn" data-tab="documents">Documentos</button>
+                    <button class="tab-btn active" data-tab="availability">
+                        <i class="fas fa-clock"></i> Disponibilidad
+                    </button>
+                    <button class="tab-btn" data-tab="agenda">
+                        <i class="fas fa-calendar-day"></i> Agenda del Día
+                    </button>
+                    <button class="tab-btn" data-tab="documents">
+                        <i class="fas fa-file-medical"></i> Documentos
+                    </button>
                 </div>
                 
                 <div class="tab-content">
                     <!-- Disponibilidad Recurrente -->
                     <div id="availability-tab" class="tab-pane active">
-                        <h3>Disponibilidad Recurrente</h3>
-                        <div id="availability-rules-list"></div>
-                        <button id="add-availability-rule" class="btn btn-primary">Agregar Regla</button>
+                        <div class="tab-pane-header">
+                            <h3>Disponibilidad Recurrente</h3>
+                            <p>Configura los horarios disponibles para cada día de la semana</p>
+                        </div>
+                        <div id="availability-rules-list" class="rules-list"></div>
+                        <button id="add-availability-rule" class="btn btn-primary"><i class="fas fa-plus"></i> Agregar Regla</button>
                         
-                        <h3>Excepciones/Bloqueos</h3>
-                        <div id="availability-exceptions-list"></div>
-                        <button id="add-availability-exception" class="btn btn-primary">Agregar Excepción</button>
+                        <div class="tab-pane-header">
+                            <h3>Excepciones y Bloqueos</h3>
+                            <p>Define fechas específicas con horarios especiales o días no laborables</p>
+                        </div>
+                        <div id="availability-exceptions-list" class="exceptions-list"></div>
+                        <button id="add-availability-exception" class="btn btn-primary"><i class="fas fa-plus"></i> Agregar Excepción</button>
                     </div>
                     
                     <!-- Agenda del Día -->
                     <div id="agenda-tab" class="tab-pane">
-                        <h3>Agenda del Día</h3>
-                        <div class="form-group">
-                            <label for="agenda-date">Fecha:</label>
-                            <input type="date" id="agenda-date">
+                        <div class="tab-pane-header">
+                            <h3>Agenda del Día</h3>
+                            <p>Consulta y gestiona las citas programadas para una fecha específica</p>
                         </div>
-                        <button id="load-agenda" class="btn btn-primary">Cargar Agenda</button>
+                        <div class="agenda-controls">
+                            <div class="form-group">
+                                <label for="agenda-date">Seleccionar fecha:</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <input type="date" id="agenda-date">
+                                </div>
+                            </div>
+                            <button id="load-agenda" class="btn btn-primary"><i class="fas fa-sync-alt"></i> Cargar Agenda</button>
+                        </div>
                         <div id="agenda-list" class="agenda-list"></div>
                     </div>
                     
                     <!-- Subir Documentos -->
                     <div id="documents-tab" class="tab-pane">
-                        <h3>Subir Plan de Alimentación</h3>
-                        <div class="form-group">
-                            <label for="appointment-for-document">Seleccionar Cita:</label>
-                            <select id="appointment-for-document"></select>
+                        <div class="tab-pane-header">
+                            <h3>Subir Plan de Alimentación</h3>
+                            <p>Comparte documentos con tus pacientes</p>
                         </div>
-                        <div class="form-group">
-                            <label for="document-file">Archivo (PDF, PNG, JPG):</label>
-                            <input type="file" id="document-file" accept=".pdf,.png,.jpg,.jpeg">
+                        <div class="document-upload-form">
+                            <div class="form-group">
+                                <label for="appointment-for-document">Seleccionar Cita:</label>
+                                <select id="appointment-for-document"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="document-file">Archivo (PDF, PNG, JPG):</label>
+                                <div class="file-upload">
+                                    <input type="file" id="document-file" accept=".pdf,.png,.jpg,.jpeg">
+                                    <label for="document-file" class="file-upload-label">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <span>Seleccionar archivo</span>
+                                    </label>
+                                    <span id="file-name" class="file-name">Ningún archivo seleccionado</span>
+                                </div>
+                            </div>
+                            <button id="upload-document" class="btn btn-primary"><i class="fas fa-upload"></i> Subir Documento</button>
                         </div>
-                        <button id="upload-document" class="btn btn-primary">Subir Documento</button>
                     </div>
                 </div>
             </section>
         </div>
     </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">
+                        <i class="fas fa-leaf"></i>
+                        <span>NutriReserva</span>
+                    </div>
+                    <p>Sistema de reserva de citas para consultas nutricionales profesionales.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Enlaces Rápidos</h3>
+                    <ul>
+                        <li><a href="#home">Inicio</a></li>
+                        <li><a href="#reservar">Reservar Cita</a></li>
+                        <li><a href="#mis-reservas">Mis Reservas</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> Calle Salud 123, Buenos Aires</li>
+                        <li><i class="fas fa-phone"></i> +54 11 1234-5678</li>
+                        <li><i class="fas fa-envelope"></i> info@nutrireserva.com</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Horarios de Atención</h3>
+                    <ul>
+                        <li>Lunes a Viernes: 9:00 - 18:00</li>
+                        <li>Sábados: 9:00 - 13:00</li>
+                        <li>Domingos: Cerrado</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 NutriReserva. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
 
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container"></div>
@@ -189,10 +433,15 @@
     <!-- Modal de Confirmación -->
     <div id="modal" class="modal" style="display:none;">
         <div class="modal-content">
-            <h3 id="modal-title"></h3>
-            <p id="modal-message"></p>
-            <div class="modal-buttons">
-                <button id="modal-cancel" class="btn btn-secondary">Cancelar</button>
+            <div class="modal-header">
+                <h3 id="modal-title"></h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-cancel" class="btn btn-outline">Cancelar</button>
                 <button id="modal-confirm" class="btn btn-primary">Confirmar</button>
             </div>
         </div>

@@ -16,6 +16,11 @@ let selectedProfessional = null;
 
 // Elementos DOM
 const elements = {
+    // Header y navegación
+    header: document.querySelector('header'),
+    mobileMenuToggle: document.querySelector('.mobile-menu-toggle'),
+    navMenu: document.querySelector('.nav-menu'),
+    
     // Autenticación
     authSection: document.getElementById('auth-section'),
     authenticatedContent: document.getElementById('authenticated-content'),
@@ -38,6 +43,10 @@ const elements = {
     showLogin: document.getElementById('show-login'),
     showReset: document.getElementById('show-reset'),
     showLoginFromReset: document.getElementById('show-login-from-reset'),
+    
+    // Hero section
+    heroReserveBtn: document.getElementById('hero-reserve-btn'),
+    heroLoginBtn: document.getElementById('hero-login-btn'),
     
     // Wizard de reserva
     appointmentDate: document.getElementById('appointment-date'),
@@ -76,7 +85,8 @@ const elements = {
     modalTitle: document.getElementById('modal-title'),
     modalMessage: document.getElementById('modal-message'),
     modalCancel: document.getElementById('modal-cancel'),
-    modalConfirm: document.getElementById('modal-confirm')
+    modalConfirm: document.getElementById('modal-confirm'),
+    modalClose: document.querySelector('.modal-close')
 };
 
 // Inicializar la aplicación
@@ -102,10 +112,20 @@ async function initializeApp() {
     
     // Cargar navegación por secciones
     setupNavigation();
+    
+    // Configurar file upload display
+    setupFileUpload();
 }
 
 // Configurar event listeners
 function setupEventListeners() {
+    // Header y navegación móvil
+    elements.mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+    
+    // Botones del hero
+    elements.heroReserveBtn.addEventListener('click', scrollToReserve);
+    elements.heroLoginBtn.addEventListener('click', scrollToLogin);
+    
     // Autenticación
     elements.loginFormEl.addEventListener('submit', handleLogin);
     elements.registerFormEl.addEventListener('submit', handleRegister);
@@ -140,6 +160,41 @@ function setupEventListeners() {
     
     // Modal
     elements.modalCancel.addEventListener('click', hideModal);
+    elements.modalClose.addEventListener('click', hideModal);
+    
+    // Cerrar modal al hacer clic fuera
+    elements.modal.addEventListener('click', function(e) {
+        if (e.target === elements.modal) {
+            hideModal();
+        }
+    });
+}
+
+// Configurar visualización de nombre de archivo
+function setupFileUpload() {
+    elements.documentFile.addEventListener('change', function() {
+        const fileName = this.files[0] ? this.files[0].name : 'Ningún archivo seleccionado';
+        document.getElementById('file-name').textContent = fileName;
+    });
+}
+
+// Alternar menú móvil
+function toggleMobileMenu() {
+    elements.navMenu.classList.toggle('active');
+}
+
+// Desplazarse a la sección de reserva
+function scrollToReserve() {
+    if (currentUser) {
+        document.getElementById('reservar').scrollIntoView({ behavior: 'smooth' });
+    } else {
+        scrollToLogin();
+    }
+}
+
+// Desplazarse a la sección de autenticación
+function scrollToLogin() {
+    elements.authSection.scrollIntoView({ behavior: 'smooth' });
 }
 
 // Verificar estado de autenticación
@@ -162,7 +217,7 @@ async function checkAuthState() {
     });
 }
 
-// Manejar usuario autenticado - VERSIÓN CORREGIDA
+// Manejar usuario autenticado
 async function handleUserSignedIn(user) {
     currentUser = user;
     
@@ -226,8 +281,15 @@ async function handleUserSignedIn(user) {
     elements.loginBtn.style.display = 'none';
     elements.logoutBtn.style.display = 'inline-block';
     
+    // Actualizar navegación
+    document.querySelector('.nav-link[href="#home"]').classList.remove('active');
+    document.querySelector('.nav-link[href="#reservar"]').classList.add('active');
+    
     // Registrar login en auditoría
     await logAction('login', 'user', user.id);
+    
+    // Mostrar mensaje de bienvenida
+    showToast(`Bienvenido/a, ${profile.full_name}`, 'success');
 }
 
 // Manejar usuario no autenticado
@@ -243,6 +305,10 @@ function handleUserSignedOut() {
     elements.userInfo.style.display = 'none';
     elements.adminNav.style.display = 'none';
     elements.adminSection.style.display = 'none';
+    
+    // Actualizar navegación
+    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+    document.querySelector('.nav-link[href="#home"]').classList.add('active');
     
     showAuthForm('login');
 }
@@ -265,10 +331,20 @@ async function handleLogin(e) {
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
     
+    // Mostrar indicador de carga
+    const submitBtn = elements.loginFormEl.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ingresando...';
+    submitBtn.disabled = true;
+    
     const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
     });
+    
+    // Restaurar botón
+    submitBtn.innerHTML = originalText;
+    submitBtn.disabled = false;
     
     if (error) {
         showToast('Error al iniciar sesión: ' + error.message, 'error');
@@ -287,6 +363,12 @@ async function handleRegister(e) {
     const phone = document.getElementById('register-phone').value;
     const password = document.getElementById('register-password').value;
     
+    // Mostrar indicador de carga
+    const submitBtn = elements.registerFormEl.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
+    submitBtn.disabled = true;
+    
     try {
         const { data, error } = await supabase.auth.signUp({
             email,
@@ -299,6 +381,10 @@ async function handleRegister(e) {
             }
         });
         
+        // Restaurar botón
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        
         if (error) {
             showToast('Error al registrarse: ' + error.message, 'error');
             return;
@@ -309,13 +395,13 @@ async function handleRegister(e) {
             elements.registerFormEl.reset();
             showAuthForm('login');
             
-            // El trigger handle_new_user se encarga de crear el perfil automáticamente
-            // NO necesitamos crear el perfil manualmente aquí
-            
             // Registrar en auditoría
             await logAction('register', 'user', data.user.id, { full_name: fullName });
         }
     } catch (error) {
+        // Restaurar botón en caso de error
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
         showToast('Error al registrarse: ' + error.message, 'error');
     }
 }
@@ -326,7 +412,17 @@ async function handlePasswordReset(e) {
     
     const email = document.getElementById('reset-email').value;
     
+    // Mostrar indicador de carga
+    const submitBtn = elements.resetFormEl.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+    submitBtn.disabled = true;
+    
     const { error } = await supabase.auth.resetPasswordForEmail(email);
+    
+    // Restaurar botón
+    submitBtn.innerHTML = originalText;
+    submitBtn.disabled = false;
     
     if (error) {
         showToast('Error al enviar enlace: ' + error.message, 'error');
@@ -427,6 +523,9 @@ function setupNavigation() {
             elements.navLinks.forEach(l => l.classList.remove('active'));
             this.classList.add('active');
             
+            // Ocultar menú móvil si está abierto
+            elements.navMenu.classList.remove('active');
+            
             // Mostrar sección correspondiente
             const targetId = this.getAttribute('href').substring(1);
             document.querySelectorAll('.section').forEach(section => {
@@ -434,6 +533,9 @@ function setupNavigation() {
             });
             
             document.getElementById(targetId).style.display = 'block';
+            
+            // Desplazarse a la sección
+            document.getElementById(targetId).scrollIntoView({ behavior: 'smooth' });
         });
     });
 }
@@ -447,8 +549,16 @@ async function goToStep2() {
         return;
     }
     
+    // Mostrar indicador de carga
+    elements.nextToStep2.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
+    elements.nextToStep2.disabled = true;
+    
     // Cargar slots disponibles para la fecha seleccionada
     const availableSlots = await getAvailableSlots(selectedDate);
+    
+    // Restaurar botón
+    elements.nextToStep2.innerHTML = 'Siguiente <i class="fas fa-arrow-right"></i>';
+    elements.nextToStep2.disabled = false;
     
     if (availableSlots.length === 0) {
         showToast('No hay horarios disponibles para esta fecha', 'info');
@@ -583,10 +693,18 @@ async function getAvailableSlots(date) {
 function renderTimeSlots(slots) {
     elements.timeSlots.innerHTML = '';
     
+    if (slots.length === 0) {
+        elements.timeSlots.innerHTML = '<p class="no-slots">No hay horarios disponibles para esta fecha.</p>';
+        return;
+    }
+    
     slots.forEach(slot => {
         const slotElement = document.createElement('div');
         slotElement.className = 'time-slot';
-        slotElement.textContent = slot;
+        slotElement.innerHTML = `
+            <i class="fas fa-clock"></i>
+            <span>${slot}</span>
+        `;
         slotElement.addEventListener('click', function() {
             // Deseleccionar todos los slots
             document.querySelectorAll('.time-slot').forEach(s => {
@@ -616,11 +734,28 @@ function renderAppointmentSummary() {
     });
     
     elements.appointmentSummary.innerHTML = `
-        <h3>Resumen de la reserva</h3>
-        <p><strong>Profesional:</strong> ${selectedProfessional.full_name}</p>
-        <p><strong>Especialidad:</strong> ${selectedProfessional.specialty}</p>
-        <p><strong>Fecha:</strong> ${formattedDate}</p>
-        <p><strong>Hora:</strong> ${selectedTimeSlot}</p>
+        <div class="summary-header">
+            <i class="fas fa-calendar-check"></i>
+            <h3>Resumen de tu reserva</h3>
+        </div>
+        <div class="summary-details">
+            <div class="detail-item">
+                <span class="detail-label">Profesional:</span>
+                <span class="detail-value">${selectedProfessional.full_name}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Especialidad:</span>
+                <span class="detail-value">${selectedProfessional.specialty}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Fecha:</span>
+                <span class="detail-value">${formattedDate}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Hora:</span>
+                <span class="detail-value">${selectedTimeSlot}</span>
+            </div>
+        </div>
     `;
 }
 
@@ -630,6 +765,10 @@ async function confirmAppointment() {
         showToast('Error al confirmar la reserva', 'error');
         return;
     }
+    
+    // Mostrar indicador de carga
+    elements.confirmAppointment.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Confirmando...';
+    elements.confirmAppointment.disabled = true;
     
     try {
         const { data, error } = await supabase
@@ -646,6 +785,10 @@ async function confirmAppointment() {
             .select()
             .single();
         
+        // Restaurar botón
+        elements.confirmAppointment.innerHTML = '<i class="fas fa-check"></i> Confirmar Reserva';
+        elements.confirmAppointment.disabled = false;
+        
         if (error) {
             if (error.code === '23505') { // Violación de constraint único
                 showToast('Este horario ya ha sido reservado. Por favor selecciona otro.', 'error');
@@ -653,7 +796,7 @@ async function confirmAppointment() {
                 throw error;
             }
         } else {
-            showToast('Reserva confirmada correctamente', 'success');
+            showToast('¡Reserva confirmada correctamente!', 'success');
             
             // Registrar en auditoría
             await logAction('create_appointment', 'appointment', data.id, {
@@ -672,6 +815,9 @@ async function confirmAppointment() {
             await loadMyAppointments();
         }
     } catch (error) {
+        // Restaurar botón en caso de error
+        elements.confirmAppointment.innerHTML = '<i class="fas fa-check"></i> Confirmar Reserva';
+        elements.confirmAppointment.disabled = false;
         showToast('Error al confirmar la reserva: ' + error.message, 'error');
     }
 }
@@ -704,7 +850,16 @@ function renderMyAppointments(appointments) {
     elements.myAppointmentsList.innerHTML = '';
     
     if (appointments.length === 0) {
-        elements.myAppointmentsList.innerHTML = '<p>No tienes reservas programadas.</p>';
+        elements.myAppointmentsList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-calendar-times"></i>
+                <h3>No tienes reservas programadas</h3>
+                <p>¡Programa tu primera cita con nuestra nutricionista!</p>
+                <button class="btn btn-primary" onclick="document.querySelector('.nav-link[href=\\'#reservar\\']').click()">
+                    <i class="fas fa-calendar-plus"></i> Reservar Ahora
+                </button>
+            </div>
+        `;
         return;
     }
     
@@ -721,29 +876,51 @@ function renderMyAppointments(appointments) {
         const isPast = dateObj < today;
         
         let statusText = '';
+        let statusClass = '';
         if (appointment.status === 'cancelled') {
-            statusText = '<span style="color: var(--error-color);">Cancelada</span>';
+            statusText = 'Cancelada';
+            statusClass = 'status-cancelled';
         } else if (appointment.status === 'completed') {
-            statusText = '<span style="color: var(--success-color);">Completada</span>';
+            statusText = 'Completada';
+            statusClass = 'status-completed';
         } else if (isPast) {
-            statusText = '<span style="color: var(--text-light);">Pasada</span>';
+            statusText = 'Pasada';
+            statusClass = 'status-past';
         } else {
-            statusText = '<span style="color: var(--primary-color);">Confirmada</span>';
+            statusText = 'Confirmada';
+            statusClass = 'status-confirmed';
         }
         
         appointmentCard.innerHTML = `
             <div class="appointment-info">
                 <h3>${appointment.professionals.full_name} - ${appointment.professionals.specialty}</h3>
-                <p><strong>Fecha:</strong> ${formattedDate} a las ${appointment.time_slot}</p>
-                <p><strong>Estado:</strong> ${statusText}</p>
-                ${appointment.notes ? `<p><strong>Notas:</strong> ${appointment.notes}</p>` : ''}
+                <div class="appointment-details">
+                    <div class="detail">
+                        <i class="fas fa-calendar"></i>
+                        <span>${formattedDate} a las ${appointment.time_slot}</span>
+                    </div>
+                    <div class="detail">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="status ${statusClass}">${statusText}</span>
+                    </div>
+                    ${appointment.notes ? `
+                        <div class="detail">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>${appointment.notes}</span>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
             <div class="appointment-actions">
                 ${appointment.status === 'reserved' && !isPast ? 
-                    `<button class="btn btn-danger cancel-appointment" data-id="${appointment.id}">Cancelar</button>` : 
+                    `<button class="btn btn-outline cancel-appointment" data-id="${appointment.id}">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>` : 
                     ''
                 }
-                <button class="btn btn-primary view-appointment-files" data-id="${appointment.id}">Documentos</button>
+                <button class="btn btn-primary view-appointment-files" data-id="${appointment.id}">
+                    <i class="fas fa-file-medical"></i> Documentos
+                </button>
             </div>
         `;
         
@@ -770,7 +947,7 @@ function renderMyAppointments(appointments) {
 function showCancelAppointmentModal(appointmentId) {
     showModal(
         'Cancelar Reserva',
-        '¿Estás seguro de que deseas cancelar esta reserva?',
+        '¿Estás seguro de que deseas cancelar esta reserva? Esta acción no se puede deshacer.',
         async () => {
             await cancelAppointment(appointmentId);
         }
@@ -817,11 +994,20 @@ async function viewAppointmentFiles(appointmentId) {
     }
     
     // Mostrar modal con lista de documentos
-    let filesHTML = '<ul>';
+    let filesHTML = '<div class="files-list">';
     files.forEach(file => {
-        filesHTML += `<li><a href="#" class="download-file" data-id="${file.id}">Descargar documento</a></li>`;
+        const fileName = file.storage_path.split('/').pop();
+        filesHTML += `
+            <div class="file-item">
+                <i class="fas fa-file-pdf"></i>
+                <span>${fileName}</span>
+                <button class="btn btn-primary download-file" data-id="${file.id}">
+                    <i class="fas fa-download"></i> Descargar
+                </button>
+            </div>
+        `;
     });
-    filesHTML += '</ul>';
+    filesHTML += '</div>';
     
     showModal(
         'Documentos de la Cita',
@@ -908,7 +1094,13 @@ function renderAvailabilityRules(rules) {
     elements.availabilityRulesList.innerHTML = '';
     
     if (rules.length === 0) {
-        elements.availabilityRulesList.innerHTML = '<p>No hay reglas de disponibilidad configuradas.</p>';
+        elements.availabilityRulesList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-clock"></i>
+                <h3>No hay reglas de disponibilidad</h3>
+                <p>Configura los horarios disponibles para cada día de la semana</p>
+            </div>
+        `;
         return;
     }
     
@@ -918,14 +1110,19 @@ function renderAvailabilityRules(rules) {
         const ruleElement = document.createElement('div');
         ruleElement.className = 'availability-rule';
         ruleElement.innerHTML = `
-            <div>
-                <strong>${weekdays[rule.weekday]}</strong>: ${rule.start_time} - ${rule.end_time}
-                (${rule.slot_minutes} min)
-                ${rule.active ? '' : ' <span style="color: var(--error-color);">(Inactiva)</span>'}
+            <div class="rule-info">
+                <div class="rule-day">${weekdays[rule.weekday]}</div>
+                <div class="rule-time">${rule.start_time} - ${rule.end_time}</div>
+                <div class="rule-duration">${rule.slot_minutes} min por cita</div>
+                ${rule.active ? '' : '<div class="rule-status inactive">Inactiva</div>'}
             </div>
-            <div>
-                <button class="btn btn-secondary edit-rule" data-id="${rule.id}">Editar</button>
-                <button class="btn btn-danger delete-rule" data-id="${rule.id}">Eliminar</button>
+            <div class="rule-actions">
+                <button class="btn btn-outline edit-rule" data-id="${rule.id}">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="btn btn-danger delete-rule" data-id="${rule.id}">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
             </div>
         `;
         
@@ -973,12 +1170,14 @@ function showAddAvailabilityRuleModal() {
                 <input type="time" id="rule-end-time" required>
             </div>
             <div class="form-group">
-                <label for="rule-slot-minutes">Duración de slot (minutos):</label>
+                <label for="rule-slot-minutes">Duración de cada cita (minutos):</label>
                 <input type="number" id="rule-slot-minutes" value="30" min="15" step="15" required>
             </div>
             <div class="form-group">
-                <label>
-                    <input type="checkbox" id="rule-active" checked> Activa
+                <label class="checkbox-label">
+                    <input type="checkbox" id="rule-active" checked> 
+                    <span class="checkmark"></span>
+                    Regla activa
                 </label>
             </div>
         </form>
@@ -1103,7 +1302,13 @@ function renderAvailabilityExceptions(exceptions) {
     elements.availabilityExceptionsList.innerHTML = '';
     
     if (exceptions.length === 0) {
-        elements.availabilityExceptionsList.innerHTML = '<p>No hay excepciones configuradas.</p>';
+        elements.availabilityExceptionsList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-calendar-times"></i>
+                <h3>No hay excepciones configuradas</h3>
+                <p>Agrega fechas específicas con horarios especiales o días no laborables</p>
+            </div>
+        `;
         return;
     }
     
@@ -1111,12 +1316,15 @@ function renderAvailabilityExceptions(exceptions) {
         const exceptionElement = document.createElement('div');
         exceptionElement.className = 'availability-exception';
         exceptionElement.innerHTML = `
-            <div>
-                <strong>${exception.date}</strong>: ${exception.start_time} - ${exception.end_time}
-                ${exception.reason ? ` (${exception.reason})` : ''}
+            <div class="exception-info">
+                <div class="exception-date">${exception.date}</div>
+                <div class="exception-time">${exception.start_time} - ${exception.end_time}</div>
+                ${exception.reason ? `<div class="exception-reason">${exception.reason}</div>` : ''}
             </div>
-            <div>
-                <button class="btn btn-danger delete-exception" data-id="${exception.id}">Eliminar</button>
+            <div class="exception-actions">
+                <button class="btn btn-danger delete-exception" data-id="${exception.id}">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
             </div>
         `;
         
@@ -1150,7 +1358,7 @@ function showAddAvailabilityExceptionModal() {
             </div>
             <div class="form-group">
                 <label for="exception-reason">Motivo (opcional):</label>
-                <input type="text" id="exception-reason">
+                <input type="text" id="exception-reason" placeholder="Ej: Vacaciones, Feriado, etc.">
             </div>
         </form>
     `;
@@ -1253,6 +1461,10 @@ async function loadDayAgenda() {
     
     if (!selectedProfessional) return;
     
+    // Mostrar indicador de carga
+    elements.loadAgenda.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
+    elements.loadAgenda.disabled = true;
+    
     const { data, error } = await supabase
         .from('appointments')
         .select(`
@@ -1262,6 +1474,10 @@ async function loadDayAgenda() {
         .eq('professional_id', selectedProfessional.id)
         .eq('date', date)
         .order('time_slot', { ascending: true });
+    
+    // Restaurar botón
+    elements.loadAgenda.innerHTML = '<i class="fas fa-sync-alt"></i> Cargar Agenda';
+    elements.loadAgenda.disabled = false;
     
     if (error) {
         console.error('Error al cargar agenda:', error);
@@ -1277,7 +1493,13 @@ function renderDayAgenda(appointments) {
     elements.agendaList.innerHTML = '';
     
     if (appointments.length === 0) {
-        elements.agendaList.innerHTML = '<p>No hay citas programadas para esta fecha.</p>';
+        elements.agendaList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-calendar-check"></i>
+                <h3>No hay citas programadas</h3>
+                <p>No se han programado citas para esta fecha</p>
+            </div>
+        `;
         return;
     }
     
@@ -1286,19 +1508,42 @@ function renderDayAgenda(appointments) {
         agendaItem.className = 'agenda-item';
         
         let statusColor = 'var(--primary-color)';
-        if (appointment.status === 'cancelled') statusColor = 'var(--error-color)';
-        if (appointment.status === 'completed') statusColor = 'var(--success-color)';
+        let statusText = 'Reservada';
+        if (appointment.status === 'cancelled') {
+            statusColor = 'var(--error-color)';
+            statusText = 'Cancelada';
+        } else if (appointment.status === 'completed') {
+            statusColor = 'var(--success-color)';
+            statusText = 'Completada';
+        }
         
         agendaItem.innerHTML = `
             <div class="agenda-info">
                 <h3>${appointment.time_slot} - ${appointment.profiles.full_name}</h3>
-                <p><strong>Teléfono:</strong> ${appointment.profiles.phone || 'No proporcionado'}</p>
-                <p><strong>Estado:</strong> <span style="color: ${statusColor}">${appointment.status}</span></p>
-                ${appointment.notes ? `<p><strong>Notas:</strong> ${appointment.notes}</p>` : ''}
+                <div class="agenda-details">
+                    <div class="detail">
+                        <i class="fas fa-phone"></i>
+                        <span>${appointment.profiles.phone || 'No proporcionado'}</span>
+                    </div>
+                    <div class="detail">
+                        <i class="fas fa-info-circle"></i>
+                        <span style="color: ${statusColor}">${statusText}</span>
+                    </div>
+                    ${appointment.notes ? `
+                        <div class="detail">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>${appointment.notes}</span>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
             <div class="agenda-actions">
-                <button class="btn btn-primary add-notes" data-id="${appointment.id}">Agregar Notas</button>
-                <button class="btn btn-secondary change-status" data-id="${appointment.id}">Cambiar Estado</button>
+                <button class="btn btn-outline add-notes" data-id="${appointment.id}">
+                    <i class="fas fa-edit"></i> Notas
+                </button>
+                <button class="btn btn-primary change-status" data-id="${appointment.id}">
+                    <i class="fas fa-sync-alt"></i> Estado
+                </button>
             </div>
         `;
         
@@ -1325,8 +1570,8 @@ function renderDayAgenda(appointments) {
 function showAddNotesModal(appointmentId) {
     const modalHTML = `
         <div class="form-group">
-            <label for="appointment-notes">Notas:</label>
-            <textarea id="appointment-notes" rows="4"></textarea>
+            <label for="appointment-notes">Notas de la consulta:</label>
+            <textarea id="appointment-notes" rows="4" placeholder="Agrega observaciones o notas importantes sobre esta consulta"></textarea>
         </div>
     `;
     
@@ -1372,7 +1617,7 @@ async function updateAppointmentNotes(appointmentId) {
 function showChangeStatusModal(appointmentId) {
     const modalHTML = `
         <div class="form-group">
-            <label for="appointment-status">Nuevo estado:</label>
+            <label for="appointment-status">Nuevo estado de la cita:</label>
             <select id="appointment-status">
                 <option value="reserved">Reservada</option>
                 <option value="cancelled">Cancelada</option>
@@ -1482,6 +1727,10 @@ async function uploadAppointmentDocument() {
         return;
     }
     
+    // Mostrar indicador de carga
+    elements.uploadDocument.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo...';
+    elements.uploadDocument.disabled = true;
+    
     try {
         // Subir archivo a storage
         const fileExt = file.name.split('.').pop();
@@ -1517,8 +1766,13 @@ async function uploadAppointmentDocument() {
         
         // Limpiar formulario
         elements.documentFile.value = '';
+        document.getElementById('file-name').textContent = 'Ningún archivo seleccionado';
     } catch (error) {
         showToast('Error al subir documento: ' + error.message, 'error');
+    } finally {
+        // Restaurar botón
+        elements.uploadDocument.innerHTML = '<i class="fas fa-upload"></i> Subir Documento';
+        elements.uploadDocument.disabled = false;
     }
 }
 
@@ -1527,7 +1781,10 @@ function showToast(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.innerHTML = `
-        <span>${message}</span>
+        <div class="toast-content">
+            <i class="fas fa-${getToastIcon(type)}"></i>
+            <span>${message}</span>
+        </div>
         <button class="btn btn-link toast-close">&times;</button>
     `;
     
@@ -1548,12 +1805,31 @@ function showToast(message, type = 'info') {
     });
 }
 
+// Obtener icono para toast según el tipo
+function getToastIcon(type) {
+    switch(type) {
+        case 'success': return 'check-circle';
+        case 'error': return 'exclamation-circle';
+        case 'warning': return 'exclamation-triangle';
+        default: return 'info-circle';
+    }
+}
+
 // Función para mostrar modal
 function showModal(title, message, confirmCallback = null, cancelText = 'Cancelar', confirmText = 'Confirmar') {
     elements.modalTitle.textContent = title;
     elements.modalMessage.innerHTML = message;
     elements.modalConfirm.textContent = confirmText;
     elements.modalCancel.textContent = cancelText;
+    
+    // Mostrar u ocultar botones según sea necesario
+    if (confirmCallback) {
+        elements.modalCancel.style.display = 'inline-block';
+        elements.modalConfirm.style.display = 'inline-block';
+    } else {
+        elements.modalCancel.style.display = 'inline-block';
+        elements.modalConfirm.style.display = 'none';
+    }
     
     elements.modal.style.display = 'flex';
     
