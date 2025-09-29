@@ -1,8 +1,13 @@
 /* Variables y Reset */
 :root {
-    --primary-color: #2e7d32;
-    --primary-light: #60ad5e;
-    --primary-dark: #005005;
+    --primary-color: #1565c0;
+    /* Blue 800 */
+    --primary-light: #5e92f3;
+    /* Blue 400/500 tint */
+    --primary-dark: #003c8f;
+    /* Blue 900-ish */
+    --on-primary: #ffffff;
+    /* texto sobre primary */
     --secondary-color: #f8f9fa;
     --accent-color: #ff9800;
     --text-color: #333;
@@ -13,9 +18,9 @@
     --success-color: #388e3c;
     --warning-color: #f57c00;
     --info-color: #1976d2;
-    --shadow: 0 4px 6px rgba(0,0,0,0.1);
-    --shadow-light: 0 2px 4px rgba(0,0,0,0.05);
-    --shadow-heavy: 0 10px 20px rgba(0,0,0,0.15);
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-heavy: 0 10px 20px rgba(0, 0, 0, 0.15);
     --radius: 8px;
     --radius-sm: 4px;
     --radius-lg: 12px;
@@ -36,7 +41,12 @@ body {
     overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     margin-bottom: 1rem;
@@ -109,7 +119,8 @@ header .container {
     font-weight: 500;
 }
 
-.nav-link.active, .nav-link:hover {
+.nav-link.active,
+.nav-link:hover {
     background-color: var(--secondary-color);
     color: var(--primary-color);
 }
@@ -437,7 +448,9 @@ label {
     padding-left: 3rem;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
     width: 100%;
     padding: 0.75rem 1rem;
     border: 1px solid var(--border-color);
@@ -446,7 +459,9 @@ input, select, textarea {
     transition: var(--transition);
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
@@ -620,13 +635,15 @@ input:focus, select:focus, textarea:focus {
 }
 
 /* Listas de Citas y Agenda */
-.appointments-list, .agenda-list {
+.appointments-list,
+.agenda-list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.appointment-card, .agenda-item {
+.appointment-card,
+.agenda-item {
     background-color: var(--secondary-color);
     padding: 1.5rem;
     border-radius: var(--radius);
@@ -637,21 +654,25 @@ input:focus, select:focus, textarea:focus {
     border-left: 4px solid var(--primary-color);
 }
 
-.appointment-card:hover, .agenda-item:hover {
+.appointment-card:hover,
+.agenda-item:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow);
 }
 
-.appointment-info, .agenda-info {
+.appointment-info,
+.agenda-info {
     flex: 1;
 }
 
-.appointment-info h3, .agenda-info h3 {
+.appointment-info h3,
+.agenda-info h3 {
     margin-bottom: 0.5rem;
     color: var(--primary-dark);
 }
 
-.appointment-actions, .agenda-actions {
+.appointment-actions,
+.agenda-actions {
     display: flex;
     gap: 0.5rem;
 }
@@ -715,11 +736,13 @@ input:focus, select:focus, textarea:focus {
     margin-bottom: 0;
 }
 
-.rules-list, .exceptions-list {
+.rules-list,
+.exceptions-list {
     margin-bottom: 1.5rem;
 }
 
-.availability-rule, .availability-exception {
+.availability-rule,
+.availability-exception {
     background-color: var(--secondary-color);
     padding: 1rem;
     border-radius: var(--radius);
@@ -818,6 +841,7 @@ input:focus, select:focus, textarea:focus {
         transform: translateX(100%);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -831,7 +855,7 @@ input:focus, select:focus, textarea:focus {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -882,8 +906,13 @@ input:focus, select:focus, textarea:focus {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes slideUp {
@@ -891,6 +920,7 @@ input:focus, select:focus, textarea:focus {
         transform: translateY(50px);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
@@ -950,7 +980,7 @@ footer {
     justify-content: center;
     width: 40px;
     height: 40px;
-    background-color: rgba(255,255,255,0.1);
+    background-color: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
     transition: var(--transition);
 }
@@ -963,7 +993,7 @@ footer {
 .footer-bottom {
     text-align: center;
     padding-top: 1.5rem;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     color: #bdc3c7;
     font-size: 0.9rem;
 }
@@ -974,15 +1004,15 @@ footer {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .hero-content {
         margin-bottom: 2rem;
     }
-    
+
     .about-content {
         flex-direction: column;
     }
-    
+
     .footer-content {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -1000,69 +1030,73 @@ footer {
         padding: 1rem;
         box-shadow: var(--shadow);
     }
-    
+
     .nav-menu.active {
         display: flex;
     }
-    
+
     .mobile-menu-toggle {
         display: block;
     }
-    
+
     .auth-status {
         display: none;
     }
-    
+
     .hero h1 {
         font-size: 2.2rem;
     }
-    
+
     .hero-buttons {
         flex-direction: column;
         align-items: center;
     }
-    
+
     .wizard-steps {
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .wizard-steps::before {
         display: none;
     }
-    
+
     .step {
         display: flex;
         align-items: center;
         gap: 1rem;
         text-align: left;
     }
-    
+
     .step-number {
         margin: 0;
         flex-shrink: 0;
     }
-    
-    .appointment-card, .agenda-item, .availability-rule, .availability-exception {
+
+    .appointment-card,
+    .agenda-item,
+    .availability-rule,
+    .availability-exception {
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
     }
-    
-    .appointment-actions, .agenda-actions {
+
+    .appointment-actions,
+    .agenda-actions {
         align-self: stretch;
         justify-content: space-between;
     }
-    
+
     .admin-tabs {
         flex-direction: column;
     }
-    
+
     .agenda-controls {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .footer-content {
         grid-template-columns: 1fr;
     }
@@ -1072,20 +1106,20 @@ footer {
     .container {
         padding: 0 1rem;
     }
-    
+
     .section {
         padding: 1.5rem;
         margin: 1rem 0;
     }
-    
+
     .time-slots-grid {
         grid-template-columns: 1fr 1fr;
     }
-    
+
     .modal-content {
         width: 95%;
     }
-    
+
     .modal-footer {
         flex-direction: column;
     }
